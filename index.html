@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Draccuweather</title>
+  </head>
+  <body>
+    <h1>🧛DRACCUWEATHER🧛</h1>
+    <span id="result">pls allow location</span>
+  <style>
+    html, body {
+      background: black;
+      color: white;
+    }
+
+    span {
+      font-size: 2em;
+    }
+
+    .nighttime {
+      animation: flash 0.5s linear infinite;
+    }
+
+    .sunny {
+      color: red;
+    }
+
+    .safe {
+      color: #37d737;
+    }
+
+    @keyframes flash {
+      0% {
+        color: red;
+      }
+      100% {
+        color: yellow;
+      }
+    }
+  </style>
+  <script>
+    // yes that's the api key, have fun (25 requests per hour, 500 per day limit)
+    const url = "https://api.tomorrow.io/v4/weather/forecast?a" + "p" + "i" + "k" + "ey=s4uyl4c0Nbgb71uWSVyE8Gj2RFzF0aqv&location="
+    const update = (position) => {
+        console.log(url + position.coords.latitude + "," + position.coords.longitude)
+
+        fetch(url + position.coords.latitude + "," + position.coords.longitude)
+          .then(resp => resp.json())
+          .then(data => {
+            let result = document.getElementById("result")
+
+            const cloudcover = data.timelines.minutely[0].values.cloudCover
+            const sunrise = new Date(data.timelines.daily[0].values.sunriseTime)
+            const sunset = new Date(data.timelines.daily[0].values.sunsetTime)
+            const now = new Date()
+
+            const isNight = now < sunrise || now > sunset
+
+            if (isNight) {
+              result.innerHTML = "IT'S NIGHTTIME GO WILD"
+              result.classList.add("nighttime")
+              return
+            }
+
+            if (cloudcover < 80.0) {
+              result.innerHTML = "YOU CAN GO OUT MAYBE"
+              result.classList.add("safe")
+            } else {
+              result.innerHTML = "IT'S SUNNY STAY INSIDE"
+              result.classList.add("sunny")
+            }
+          })
+    }
+    navigator.geolocation.getCurrentPosition(update)
+  </script>
+  </body>
+
+</html>
