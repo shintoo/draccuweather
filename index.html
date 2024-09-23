@@ -61,7 +61,7 @@
               return
             }
 
-            if (cloudcover < 80.0) {
+            if (cloudcover > 80.0) {
               result.innerHTML = "YOU CAN GO OUT MAYBE"
               result.classList.add("safe")
             } else {
